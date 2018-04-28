@@ -43,7 +43,7 @@ jsonObject := parentArray.GetJsonObject(0)
 name, err := parentObject.GetString("name")
 age, err := parentObject.GetInt("age")
 id, err := parentObject.GetInt64("id")
-isMarried, err := parentObject.GetBoolean("is_married)
+isMarried, err := parentObject.GetBoolean("is_married")
 ```
 
 ### Get values which could be `null`
@@ -74,12 +74,12 @@ import (
 )
 
 func main() {
-    defer func() {
+	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
 		}
-    }()
-    jsonStr := `{
+	}()
+	jsonStr := `{
 		"user": {
 			"name": "aa",
 			"age": 10,
