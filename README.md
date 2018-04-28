@@ -78,8 +78,8 @@ func main() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
 		}
-	}()
-	jsonStr := `{
+    }()
+    jsonStr := `{
 		"user": {
 			"name": "aa",
 			"age": 10,
