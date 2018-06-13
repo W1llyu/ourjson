@@ -11,6 +11,10 @@ func (j *JsonArray) Get(index int) (*Value, error) {
 	return j.s[index], nil
 }
 
+func (j *JsonArray) Values() ([]*Value) {
+	return j.s
+}
+
 func (j *JsonArray) GetJsonObject(index int) *JsonObject {
 	val, err := j.Get(index)
 	if err != nil {
