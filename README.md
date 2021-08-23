@@ -5,14 +5,14 @@ Ourjson is an easy to use JSON library for go. It is designed just like [Fastjso
 ## Install
 
 ```shell
-go get github.com/W1llyu/ourjson
+go get github.com/putao520/ourjson
 ```
 
 ## Import
 
 ```go
 import (
-  "github.com/W1llyu/ourjson"
+  "github.com/putao520/ourjson"
 )
 ```
 
