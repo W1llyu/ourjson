@@ -139,6 +139,10 @@ func main() {
 
 	address2NowLive, err := address2.JsonObject().GetNullBoolean("now_live")
 	fmt.Println(address2NowLive, err)
+	
+	k, _ := address2.iter() {
+		fmt.Println(k)
+	}
 }
 
 ```
