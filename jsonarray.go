@@ -4,6 +4,10 @@ type JsonArray struct {
 	s []*Value
 }
 
+func (j *JsonArray) Iter() []*Value {
+	return j.s
+}
+
 func (j *JsonArray) Get(index int) (*Value, error) {
 	if index >= len(j.s) {
 		return nil, IndexOutOfRangeError
@@ -11,7 +15,7 @@ func (j *JsonArray) Get(index int) (*Value, error) {
 	return j.s[index], nil
 }
 
-func (j *JsonArray) Values() ([]*Value) {
+func (j *JsonArray) Values() []*Value {
 	return j.s
 }
 
@@ -90,7 +94,7 @@ func (j *JsonArray) GetNullFloat(index int) (*Float, error) {
 func (j *JsonArray) GetBoolean(index int) (bool, error) {
 	val, err := j.Get(index)
 	if err != nil {
-		return false , err
+		return false, err
 	}
 	return val.Boolean()
 }
