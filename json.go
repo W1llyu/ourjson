@@ -4,6 +4,11 @@ package ourjson
 
 import "encoding/json"
 
+func New() *JsonObject {
+	j, _ := ParseObject("{}")
+	return j
+}
+
 func ParseObject(jsonStr string) (*JsonObject, error) {
 	value := new(Value)
 
@@ -13,6 +18,11 @@ func ParseObject(jsonStr string) (*JsonObject, error) {
 	}
 
 	return value.JsonObject(), nil
+}
+
+func NewArray() *JsonArray {
+	ja, _ := ParseArray("[]")
+	return ja
 }
 
 func ParseArray(jsonStr string) (*JsonArray, error) {
