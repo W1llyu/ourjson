@@ -1,7 +1,57 @@
 package ourjson
 
+import (
+	"strconv"
+	"strings"
+)
+
 type JsonArray struct {
 	s []*Value
+}
+
+func (j *JsonArray) ToString() string {
+	str := "["
+	for _, v := range j.s {
+		switch v.Data().(type) {
+		case string:
+			str += `"` + v.data.(string) + `"`
+		case int:
+			str += strconv.Itoa(v.data.(int))
+		case int64:
+			str += strconv.FormatInt(v.data.(int64), 10)
+		case float64:
+			str += strconv.FormatFloat(v.data.(float64), 'E', -1, 64)
+		case Float:
+			str += strconv.FormatFloat(v.data.(float64), 'E', -1, 32)
+		case Boolean:
+			{
+				if v.data.(bool) {
+					str += "true"
+				} else {
+					str += "false"
+				}
+			}
+		case JsonObject:
+			{
+				json := v.data.(JsonObject)
+				str += json.ToString()
+			}
+		case JsonArray:
+			{
+				array := v.data.(JsonArray)
+				str += array.ToString()
+			}
+		}
+		str += ","
+	}
+	str = strings.TrimRight(str, ",")
+	str += "]"
+	return str
+}
+
+func (j *JsonArray) Replace(fj *JsonArray) *JsonArray {
+	j.s = fj.s
+	return j
 }
 
 func (j *JsonArray) Iter() []*Value {

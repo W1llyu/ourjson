@@ -20,9 +20,19 @@ func ParseObject(jsonStr string) (*JsonObject, error) {
 	return value.JsonObject(), nil
 }
 
+func FromObject(json *JsonObject) *JsonObject {
+	j := New()
+	return j.Replace(json)
+}
+
 func NewArray() *JsonArray {
 	ja, _ := ParseArray("[]")
 	return ja
+}
+
+func FromArray(json *JsonArray) *JsonArray {
+	j := NewArray()
+	return j.Replace(json)
 }
 
 func ParseArray(jsonStr string) (*JsonArray, error) {
