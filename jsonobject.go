@@ -11,11 +11,33 @@ type JsonObject struct {
 	m map[string]*Value
 }
 
+func (j *JsonObject) compareTo(c *JsonObject) bool {
+	if c == nil {
+		return false
+	}
+	for k, v := range j.Iter() {
+		data := v.Data()
+		switch data.(type) {
+		case map[string]interface{}:
+			v.JsonObject().compareTo(c.GetJsonObject(k))
+		case []interface{}:
+			v.JsonArray().compareTo(c.GetJsonArray(k))
+		default:
+			jv, err := c.Get(k)
+			if err != nil || jv.data != v.data {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func (j *JsonObject) ToString() string {
 	str := "{"
 	for k, v := range j.m {
-		str += `"` + k + `"`
-		switch v.Data().(type) {
+		str += `"` + k + `":`
+		data := v.Data()
+		switch data.(type) {
 		case string:
 			str += `"` + v.data.(string) + `"`
 		case int:
@@ -23,10 +45,8 @@ func (j *JsonObject) ToString() string {
 		case int64:
 			str += strconv.FormatInt(v.data.(int64), 10)
 		case float64:
-			str += strconv.FormatFloat(v.data.(float64), 'E', -1, 64)
-		case Float:
-			str += strconv.FormatFloat(v.data.(float64), 'E', -1, 32)
-		case Boolean:
+			str += strconv.FormatFloat(v.data.(float64), 'f', -1, 64)
+		case bool:
 			{
 				if v.data.(bool) {
 					str += "true"
@@ -34,16 +54,13 @@ func (j *JsonObject) ToString() string {
 					str += "false"
 				}
 			}
-		case JsonObject:
-			{
-				json := v.data.(JsonObject)
-				str += json.ToString()
-			}
-		case JsonArray:
-			{
-				array := v.data.(JsonArray)
-				str += array.ToString()
-			}
+		// case JsonObject:
+		case map[string]interface{}:
+			str += v.JsonObject().ToString()
+		case []interface{}:
+			str += v.JsonArray().ToString()
+		case nil:
+			str += "null"
 		}
 		str += ","
 	}
@@ -83,7 +100,8 @@ func (j *JsonObject) Get(key string) (*Value, error) {
 func (j *JsonObject) GetJsonObject(key string) *JsonObject {
 	val, err := j.Get(key)
 	if err != nil {
-		panic(err)
+		// panic(err)
+		return nil
 	}
 	return val.JsonObject()
 }
@@ -94,7 +112,8 @@ func (j *JsonObject) GetJsonObject(key string) *JsonObject {
 func (j *JsonObject) GetJsonArray(key string) *JsonArray {
 	val, err := j.Get(key)
 	if err != nil {
-		panic(err)
+		// panic(err)
+		return nil
 	}
 	return val.JsonArray()
 }

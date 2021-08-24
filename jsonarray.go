@@ -9,10 +9,31 @@ type JsonArray struct {
 	s []*Value
 }
 
+func (j *JsonArray) compareTo(c *JsonArray) bool {
+	if c == nil {
+		return false
+	}
+	for i, v := range j.Iter() {
+		data := v.Data()
+		switch data.(type) {
+		case map[string]interface{}:
+			v.JsonObject().compareTo(c.GetJsonObject(i))
+		case []interface{}:
+			v.JsonArray().compareTo(c.GetJsonArray(i))
+		default:
+			jv, err := c.Get(i)
+			if err != nil || jv.data != v.data {
+				return false
+			}
+		}
+	}
+	return true
+}
 func (j *JsonArray) ToString() string {
 	str := "["
 	for _, v := range j.s {
-		switch v.Data().(type) {
+		data := v.Data()
+		switch data.(type) {
 		case string:
 			str += `"` + v.data.(string) + `"`
 		case int:
@@ -20,10 +41,8 @@ func (j *JsonArray) ToString() string {
 		case int64:
 			str += strconv.FormatInt(v.data.(int64), 10)
 		case float64:
-			str += strconv.FormatFloat(v.data.(float64), 'E', -1, 64)
-		case Float:
-			str += strconv.FormatFloat(v.data.(float64), 'E', -1, 32)
-		case Boolean:
+			str += strconv.FormatFloat(v.data.(float64), 'f', -1, 64)
+		case bool:
 			{
 				if v.data.(bool) {
 					str += "true"
@@ -31,16 +50,12 @@ func (j *JsonArray) ToString() string {
 					str += "false"
 				}
 			}
-		case JsonObject:
-			{
-				json := v.data.(JsonObject)
-				str += json.ToString()
-			}
-		case JsonArray:
-			{
-				array := v.data.(JsonArray)
-				str += array.ToString()
-			}
+		case map[string]interface{}:
+			str += v.JsonObject().ToString()
+		case []interface{}:
+			str += v.JsonArray().ToString()
+		case nil:
+			str += "null"
 		}
 		str += ","
 	}

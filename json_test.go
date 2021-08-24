@@ -1,8 +1,8 @@
 package ourjson
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestParseObject(t *testing.T) {
@@ -71,6 +71,15 @@ func TestParseObject(t *testing.T) {
 
 	address2NowLive, err := address2.JsonObject().GetNullBoolean("now_live")
 	fmt.Println(address2NowLive, err)
+
+	jsonStrCmp := jsonObject.ToString()
+	fmt.Println(jsonStrCmp)
+	// cmp json
+	jsonObjCmp, _ := ParseObject(jsonStrCmp)
+
+	if !jsonObjCmp.compareTo(jsonObject) {
+		t.Errorf("json compare false-> toString faild")
+	}
 }
 
 func TestParseArray(t *testing.T) {
@@ -85,7 +94,8 @@ func TestParseArray(t *testing.T) {
 		},
 		{
 			"name": "Uzi"
-		}
+		},
+	"asd",123,9.8,null,false
 	]
 	`
 	jsonArray, err := ParseArray(jsonStr)
@@ -93,4 +103,12 @@ func TestParseArray(t *testing.T) {
 
 	name1, err := jsonArray.GetJsonObject(0).GetString("name")
 	fmt.Println(name1, err)
+
+	arrayStrCmp := jsonArray.ToString()
+	fmt.Println(arrayStrCmp)
+
+	arrayObjCmp, _ := ParseArray(arrayStrCmp)
+	if !arrayObjCmp.compareTo(jsonArray) {
+		t.Errorf("jsonArray compare false-> toString faild")
+	}
 }
