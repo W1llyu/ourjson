@@ -143,6 +143,20 @@ func main() {
 	k, _ := address2.iter() {
 		fmt.Println(k)
 	}
+	
+	fmt.Println(address2.ToString())
+
+	fmt.Println(user.ToString())
+
+	j := ourjson.New()
+	
+	j2 := ourjson.FromObject(j)
+	
+	ja := ourjson.NewArray()
+	
+	ja2 := ourjson.FromArray(js)
+	
+	
 }
 
 ```
