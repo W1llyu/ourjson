@@ -15,7 +15,7 @@ func (j *JsonObject) compareTo(c *JsonObject) bool {
 	if c == nil {
 		return false
 	}
-	for k, v := range j.Iter() {
+	for k, v := range j.Values() {
 		data := v.Data()
 		switch data.(type) {
 		case map[string]interface{}:
@@ -32,7 +32,7 @@ func (j *JsonObject) compareTo(c *JsonObject) bool {
 	return true
 }
 
-func (j *JsonObject) ToString() string {
+func (j *JsonObject) String() string {
 	str := "{"
 	for k, v := range j.m {
 		str += `"` + k + `":`
@@ -56,9 +56,9 @@ func (j *JsonObject) ToString() string {
 			}
 		// case JsonObject:
 		case map[string]interface{}:
-			str += v.JsonObject().ToString()
+			str += v.JsonObject().String()
 		case []interface{}:
-			str += v.JsonArray().ToString()
+			str += v.JsonArray().String()
 		case nil:
 			str += "null"
 		}
@@ -70,12 +70,34 @@ func (j *JsonObject) ToString() string {
 }
 
 func (j *JsonObject) Replace(fj *JsonObject) *JsonObject {
-	j.m = fj.m
+	json := make(map[string]*Value)
+	for k, v := range fj.Values() {
+		data := v.Data()
+		switch data.(type) {
+		case map[string]interface{}:
+			nJson, _ := ParseObject("{}")
+			nJson.Replace(v.JsonObject())
+			json[k] = &Value{nJson.toInterface(), nJson}
+		case []interface{}:
+			nArray, _ := ParseArray("[]")
+			nArray.Replace(v.JsonArray())
+			json[k] = &Value{nArray.toInterface(), nArray}
+		default:
+			json[k] = &Value{data, nil}
+		}
+	}
+	j.m = json
 	return j
 }
 
-func (j *JsonObject) Iter() map[string]*Value {
-	return j.m
+func (j *JsonObject) Clear() *JsonObject {
+	j.m = make(map[string]*Value)
+	return j
+}
+
+func (j *JsonObject) Remove(key string) *JsonObject {
+	delete(j.m, key)
+	return j
 }
 
 // Check if the key is existed
@@ -92,6 +114,10 @@ func (j *JsonObject) Get(key string) (*Value, error) {
 		return nil, KeyNotFoundError{key}
 	}
 	return j.m[key], nil
+}
+
+func (j *JsonObject) Values() map[string]*Value {
+	return j.m
 }
 
 // Get a child node of JsonObject from this parent node
@@ -212,6 +238,15 @@ func (j *JsonObject) GetNullBoolean(key string) (*Boolean, error) {
 	return val.NullBoolean()
 }
 
-func (j *JsonObject) Put(key string, val interface{}) {
-	j.m[key] = &Value{val}
+func (j *JsonObject) toInterface() map[string]interface{} {
+	m := make(map[string]interface{})
+	for k, v := range j.m {
+		m[k] = v.data
+	}
+	return m
+}
+
+func (j *JsonObject) Put(key string, val interface{}) *JsonObject {
+	j.m[key] = &Value{inputConvert(val), nil}
+	return j
 }
