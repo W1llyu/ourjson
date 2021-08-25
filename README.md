@@ -154,9 +154,20 @@ func main() {
 	
 	ja := ourjson.NewArray()
 	
-	ja2 := ourjson.FromArray(js)
+	ja2 := ourjson.FromArray(ja)
 	
+	for k, v := range jsonObject.Values() {
+		fmt.Println("key:" + k)
+		fmt.Println("val:" + v)
+    }
+    
+    j.replace(jsonObject)
 	
+	j.Clear()
+	
+	j.remove("address")
+	
+	size := len(jsonObject.Values())
 }
 
 ```
