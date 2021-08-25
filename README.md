@@ -168,6 +168,12 @@ func main() {
 	j.remove("address")
 	
 	size := len(jsonObject.Values())
+
+	fmt.Println(jsonObject)
+	
+	str := jsonObject.String()
+	fmt.Println(str)
+	
 }
 
 ```
