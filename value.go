@@ -13,7 +13,12 @@ const (
 )
 
 type Value struct {
-	data interface {}
+	data interface{}
+	warp interface{}
+}
+
+func (v *Value) Data() interface{} {
+	return v.data
 }
 
 func (v *Value) MarshalJSON() ([]byte, error) {
@@ -21,30 +26,45 @@ func (v *Value) MarshalJSON() ([]byte, error) {
 }
 
 func (v *Value) JsonObject() *JsonObject {
-	if _, ok := v.data.(map[string]interface {}); !ok {
+	if v.warp != nil {
+		return v.warp.(*JsonObject)
+	}
+
+	if _, ok := v.data.(map[string]interface{}); !ok {
 		panic(ValueTransformTypeError{JSONOBJECTTYPE})
 	}
 	mapValue := make(map[string]*Value)
-	for key, val := range v.data.(map[string]interface {}) {
-		mapValue[key] = &Value{val}
+	for key, val := range v.data.(map[string]interface{}) {
+		mapValue[key] = &Value{val, nil}
 	}
-	return &JsonObject{
+
+	warp := &JsonObject{
 		//Value: Value{v.data},
 		m: mapValue,
 	}
+	v.warp = warp
+	return warp
 }
 
 func (v *Value) JsonArray() *JsonArray {
-	if _, ok := v.data.([]interface {}); !ok {
+	if v.warp != nil {
+		return v.warp.(*JsonArray)
+	}
+
+	if _, ok := v.data.([]interface{}); !ok {
 		panic(ValueTransformTypeError{JSONARRAYTYPE})
 	}
-	var slice []*Value
-	for _, val := range v.data.([]interface {}) {
-		slice = append(slice, &Value{val})
+	// var slice []*Value
+	var slice = make([]*Value, 0)
+	for _, val := range v.data.([]interface{}) {
+		slice = append(slice, &Value{val, nil})
 	}
-	return &JsonArray{
+
+	warp := &JsonArray{
 		s: slice,
 	}
+	v.warp = warp
+	return warp
 }
 
 func (v *Value) String() (string, error) {

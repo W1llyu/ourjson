@@ -5,14 +5,14 @@ Ourjson is an easy to use JSON library for go. It is designed just like [Fastjso
 ## Install
 
 ```shell
-go get github.com/W1llyu/ourjson
+go get github.com/putao520/ourjson
 ```
 
 ## Import
 
 ```go
 import (
-  "github.com/W1llyu/ourjson"
+  "github.com/putao520/ourjson"
 )
 ```
 
@@ -70,7 +70,7 @@ package main
 
 import (
   "fmt"
-  "github.com/W1llyu/ourjson"
+  "github.com/putao520/ourjson"
 )
 
 func main() {
@@ -139,6 +139,41 @@ func main() {
 
 	address2NowLive, err := address2.JsonObject().GetNullBoolean("now_live")
 	fmt.Println(address2NowLive, err)
+	
+	k, _ := address2.iter() {
+		fmt.Println(k)
+	}
+	
+	fmt.Println(address2.ToString())
+
+	fmt.Println(user.ToString())
+
+	j := ourjson.New()
+	
+	j2 := ourjson.FromObject(j)
+	
+	ja := ourjson.NewArray()
+	
+	ja2 := ourjson.FromArray(ja)
+	
+	for k, v := range jsonObject.Values() {
+		fmt.Println("key:" + k)
+		fmt.Println("val:" + v)
+    }
+    
+    j.replace(jsonObject)
+	
+	j.Clear()
+	
+	j.remove("address")
+	
+	size := len(jsonObject.Values())
+
+	fmt.Println(jsonObject)
+	
+	str := jsonObject.String()
+	fmt.Println(str)
+	
 }
 
 ```

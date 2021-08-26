@@ -1,8 +1,8 @@
 package ourjson
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestParseObject(t *testing.T) {
@@ -71,6 +71,26 @@ func TestParseObject(t *testing.T) {
 
 	address2NowLive, err := address2.JsonObject().GetNullBoolean("now_live")
 	fmt.Println(address2NowLive, err)
+
+	jsonStrCmp := jsonObject.String()
+	fmt.Println(jsonStrCmp)
+
+	// fast
+	userObj := jsonObject.GetJsonObject("user")
+	userObj.Put("test1", 123)
+	fmt.Println(jsonObject.String())
+	userObj.Put("test2", "ttt")
+	fmt.Println(jsonObject.String())
+
+	// cmp json
+	jsonObjCmp, _ := ParseObject(jsonStrCmp)
+	if !jsonObjCmp.compareTo(jsonObject) {
+		t.Errorf("json compare false-> String faild")
+	}
+	// replace json
+	nJson := New()
+	nJson.Replace(jsonObject)
+	fmt.Println(nJson.String())
 }
 
 func TestParseArray(t *testing.T) {
@@ -85,7 +105,8 @@ func TestParseArray(t *testing.T) {
 		},
 		{
 			"name": "Uzi"
-		}
+		},
+	"asd",123,9.8,null,false
 	]
 	`
 	jsonArray, err := ParseArray(jsonStr)
@@ -93,4 +114,23 @@ func TestParseArray(t *testing.T) {
 
 	name1, err := jsonArray.GetJsonObject(0).GetString("name")
 	fmt.Println(name1, err)
+
+	arrayStrCmp := jsonArray.String()
+	fmt.Println(arrayStrCmp)
+
+	arrayObjCmp, _ := ParseArray(arrayStrCmp)
+	if !arrayObjCmp.compareTo(jsonArray) {
+		t.Errorf("jsonArray compare false-> String faild")
+	}
+
+	userObj := jsonArray.GetJsonObject(1)
+	userObj.Put("test1", New().Put("caption", "value"))
+	fmt.Println(jsonArray.String())
+	jsonArray.Put("test2")
+	fmt.Println(jsonArray.String())
+
+	// replace jsonArray
+	nArray := NewArray()
+	nArray.Replace(jsonArray)
+	fmt.Println(nArray.String())
 }
